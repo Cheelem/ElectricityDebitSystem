@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head th:replace="common-header::common_header(~{::title},~{},~{})">
+    <meta charset="UTF-8">
+    <title th:text='${me.getString("USER_NAME")}'></title>
+</head>
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-indigo">
+<!--header-->
+<div th:replace="header::header"></div>
+<br/>
+<div class="mdui-container-fluid">
+    <div class="mdui-row">
+        <div class="mdui-col-sm-12 mdui-col-md-6">
+            <div class="mdui-card">
+                <!-- 卡片头部，包含头像、标题、副标题 -->
+                <div class="mdui-card-header">
+                    <i class="mdui-card-header-avatar mdui-icon material-icons">person</i>
+                    <div class="mdui-card-header-title" th:text='${me.getString("USER_NAME")}'></div>
+                    <div class="mdui-card-header-subtitle">电力清单详情</div>
+                </div>
+                <div class="mdui-card-actions">
+                    <a th:href='@{|/pay-order/balance/${me.getInt("USER_ID")}|}'
+                       class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-primary">
+                        <i class="mdui-icon material-icons">account_balance_wallet</i> 使用当前余额扣款
+                    </a>
+                    <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-primary"
+                            mdui-dialog="{target: '#pay-from-bank'}">
+                        <i class="mdui-icon material-icons">payment</i> 通过银行缴费
+                    </button>
+                </div>
+
+                <!-- 卡片的内容 -->
+                <div class="mdui-card-content">
+
+                    <!-- 余额/欠费金额 -->
+                    <div class="mdui-row">
+                        <div class="mdui-col-xs-6">
+                            <div class="mdui-card-primary">
+                                <div class="mdui-card-primary-title">
+                                    <i class="mdui-icon material-icons">attach_money</i>
+                                    <span th:text='${me.getString("USER_BALANCE")}'></span> 元
+                                </div>
+                                <div class="mdui-card-primary-subtitle">当前帐户余额</div>
+                            </div>
+                        </div>
+                        <div class="mdui-col-xs-6">
+                            <div class="mdui-card-primary">
+                                <div class="mdui-card-primary-title">
+                                    <i class="mdui-icon material-icons">money_off</i>
+                                    <span th:text="${totalfee}"></span> 元
+                                </div>
+                                <div class="mdui-card-primary-subtitle">共计欠费</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="mdui-card-primary">
+                            <div class="mdui-card-primary-title"><i class="mdui-icon material-icons">battery_charging_full</i>
+                                我的用电设备
+                            </div>
+                            <div class="mdui-card-primary-subtitle">点击查看其详细用费用量或缴费</div>
+                        </div>
+                    </div>
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table mdui-table-hoverable">
+                            <thead>
+                            <tr>
+                                <th>设备号</th>
+                                <th>地址</th>
+                                <th>类型</th>
+                                <th>设备欠费</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="device:${devices}">
+                                <!--/*@thymesVar id="getString" type="org.json.JSONObject"*/-->
+                                <td th:text='${device.getString("DEVICE_ID")}'></td>
+                                <td th:text='${device.getString("DEVICE_ADDRESS")}'></td>
+                                <td><span th:if="${device.getString('DEVICE_TYPE')} eq '01'">家用设备</span>
+                                    <span th:if="${device.getString('DEVICE_TYPE')} eq '02'">企业设备</span>
+                                </td>
+                                <td>
+                                    <p th:if="${device.has('FEE')} eq true">
+                                        <span th:text="${device.getString('FEE')}"></span> 元
+                                    </p>
+                                    <p th:if="${device.has('FEE')} eq false">
+                                        无欠费
+                                    </p>
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div>
+                        <div class="mdui-card-primary">
+                            <div class="mdui-card-primary-title"><i
+                                    class="mdui-icon material-icons">playlist_add_check</i> 缴费记录
+                            </div>
+                            <div class="mdui-card-primary-subtitle">可选择当天内的记录进行冲正</div>
+                        </div>
+                    </div>
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table mdui-table-hoverable">
+                            <thead>
+                            <tr>
+                                <th>缴费流水号</th>
+                                <th>支付金额</th>
+                                <th>支付帐户</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="order:${orders}">
+                                <!--/*@thymesVar id="getString" type="org.json.JSONObject"*/-->
+                                <td th:text='${order.getString("ORDER_ID")}'></td>
+                                <td th:text='${order.getString("PAYMENT_AMOUNT")}'></td>
+                                <td th:text='${order.getString("BANK_ACCOUNT_ID")}'></td>
+                                <td>
+                                    <div th:if='${order.getString("PAYMENT_AMOUNT")} gt 0'>
+                                        <div th:if='${order.getString("IS_PAID")} eq 1'>
+                                            <a th:href='@{|/reversal/${userId}/${order.getString("ORDER_ID")}/${order.getString("PAYMENT_AMOUNT")}|}'
+                                                    class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">
+                                                <i class="mdui-icon material-icons">reply</i> 冲正
+                                            </a>
+                                        </div>
+                                        <div th:if='${order.getString("IS_PAID")} eq 0'>
+                                            <i class="mdui-icon material-icons">reply_all</i> 已冲正
+                                        </div>
+                                    </div>
+                                    <div th:if='${order.getString("PAYMENT_AMOUNT")} lt 0'>
+                                        <i class="mdui-icon material-icons">format_indent_decrease</i> 冲正记录
+                                    </div>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                    <div>
+                        <div class="mdui-card-primary">
+                            <div class="mdui-card-primary-title"><i
+                                    class="mdui-icon material-icons">playlist_add_check</i> 余额动账记录
+                            </div>
+                            <div class="mdui-card-primary-subtitle">余额在抄表结算日时将被用于抵扣您的本金</div>
+                        </div>
+                    </div>
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table mdui-table-hoverable">
+                            <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>余额变动</th>
+                                <th>变动后余额</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="log:${balancelogs}">
+                                <!--/*@thymesVar id="getString" type="org.json.JSONObject"*/-->
+                                <td th:text='${log.getString("LOG_TIME")}'></td>
+                                <td>
+                                    <span th:text='${log.getString("BALANCE_DIFF")}'></span> 元
+                                </td>
+                                <td>
+                                    <span th:text="${log.getString('BALANCE_AFTER')}"></span>元
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="mdui-col-sm-12 mdui-col-md-6">
+            <div class="mdui-card">
+
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title"><i class="mdui-icon material-icons">assignment</i> 账单详情</div>
+                    <div class="mdui-card-primary-subtitle">包含您名下所有设备用电账单</div>
+                </div>
+                <div class="mdui-card-content">
+
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table mdui-table-hoverable">
+                            <thead>
+                            <tr>
+                                <th>账单记录号</th>
+                                <th>账单时间</th>
+                                <th>所属设备号</th>
+                                <th>电表读数</th>
+                                <th>电力用量</th>
+                                <th>基本费用</th>
+                                <th>附加费用1</th>
+                                <th>附加费用2</th>
+                                <th>总费用</th>
+                                <th>已缴费用</th>
+                                <th>应缴费用</th>
+                                <th>缴费期限</th>
+                                <th>滞纳金</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="record:${records}">
+                                <!--/*@thymesVar id="getString" type="org.json.JSONObject"*/-->
+                                <td>
+                                    <span th:text='${record.getString("RECORD_ID")}'></span>
+                                    <br/>
+                                    <span class="mdui-color-theme-primary" th:if='${record.getDouble("FEE_TO_PAY")} eq ${record.getDouble("FEE_PAID")}'>[已缴清]</span>
+                                    <span class="mdui-color-theme-primary" th:if='${record.getDouble("LATE_FEE")} gt 0'>[已产生滞纳金]</span>
+                                </td>
+                                <td th:text='${record.getString("RECORD_TIME")}'></td>
+                                <td th:text='${record.getString("DEVICE_ID")}'></td>
+                                <td>
+                                    <span th:text='${record.getString("METER_NUMBER")}'></span>度
+                                </td>
+                                <td>
+                                    <span th:text='${record.getString("METER_USAGE")}'></span>度
+                                </td>
+                                <td th:text='${record.getString("BASIC_FEE")}'></td>
+                                <td th:text='${record.getString("EXTRA_FEE_1")}'></td>
+                                <td th:text='${record.getString("EXTRA_FEE_2")}'></td>
+                                <td th:text='${record.getString("TOTAL_FEE")}'></td>
+                                <td th:text='${record.getString("FEE_PAID")}'></td>
+                                <td th:text='${record.getString("FEE_TO_PAY")}'></td>
+                                <td th:text='${record.getString("PAYMENT_DEADLINE")}'></td>
+                                <td th:text='${record.getDouble("LATE_FEE")}'></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title"><i class="mdui-icon material-icons">payment</i> 我的缴费银行账户</div>
+                    <div class="mdui-card-primary-subtitle">系统记录您使用过的缴费银行卡</div>
+                </div>
+                <div class="mdui-card-content">
+
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table mdui-table-hoverable">
+                            <thead>
+                            <tr>
+                                <th>银行卡号</th>
+                                <th>所属银行</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="account:${bankaccounts}">
+                                <!--/*@thymesVar id="getString" type="org.json.JSONObject"*/-->
+                                <td><span th:text='${account.getString("BANK_ACCOUNT_ID")}'></span></td>
+                                <td>
+                                    <span th:text='${account.getString("BANK_NAME")}'></span>(<span
+                                        th:text='${account.getString("BANK_ID")}'></span>)
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mdui-dialog" id="pay-from-bank">
+        <div class="mdui-dialog-title"><i class="mdui-icon material-icons">battery_charging_full</i> 电力缴费</div>
+        <form th:action="@{|/pay-order/submit/${me.getInt('USER_ID')}|}" method="post">
+            <div class="mdui-dialog-content">
+                输入您希望缴费的信息
+                <div class="mdui-card-content">
+
+                    <div class="mdui-textfield mdui-textfield-floating-label">
+                        <i class="mdui-icon material-icons">format_list_numbered</i>
+                        <label class="mdui-textfield-label">电表设备编号</label>
+                        <input name="device-id" class="mdui-textfield-input" type="number"/>
+                    </div>
+
+                    <div class="mdui-textfield mdui-textfield-floating-label">
+                        <i class="mdui-icon material-icons">monetization_on</i>
+                        <label class="mdui-textfield-label">金额</label>
+                        <input name="amount" class="mdui-textfield-input" type="number"/>
+                    </div>
+
+                    <div class="mdui-textfield">
+                        <i class="mdui-icon material-icons">credit_card</i>
+                        <label class="mdui-textfield-label">银行卡号</label>
+                        <input name="bank-account-id" class="mdui-textfield-input"/>
+                    </div>
+
+                    <div>
+                        <i class="mdui-icon material-icons">account_balance</i>
+                        开户行 <span> </span>
+                        <select name="bank-id" class="mdui-select" mdui-select>
+                            <option value="ICBC" selected>中国工商银行</option>
+                            <option value="ABC">中国农业银行</option>
+                            <option value="CBC">中国建设银行</option>
+                            <option value="CMB">招商银行</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="mdui-dialog-actions">
+                <button type="submit" class="mdui-btn mdui-ripple mdui-color-theme-accent">
+                    提交
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+</body>
+</html>

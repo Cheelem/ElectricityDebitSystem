@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head th:replace="common-header::common_header(~{::title},~{},~{})">
+    <meta charset="UTF-8">
+    <title>电费支付</title>
+</head>
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-indigo">
+<!--header-->
+<div th:replace="header::header"></div>
+<div>
+    <div>
+        <div class="mdui-container">
+            <div>
+                <div class="mdui-card-primary">
+
+                    <div th:if='${result.getInt("RESULT")} lt 0'>
+                        <div class="mdui-card-primary-title">
+                            <i class="mdui-icon material-icons">error</i>
+                            格式有误
+                        </div>
+                    </div>
+                    <div th:if='${result.getInt("RESULT")} eq 0'>
+                        <div class="mdui-card-primary-title">
+                            <i class="mdui-icon material-icons">error</i>
+                            余额不足以缴纳现有的任何电费清单，请通过银行卡缴费
+                        </div>
+                    </div>
+                    <div th:if='${result.getInt("RESULT")} gt 0'>
+                        <div class="mdui-card-primary-title">
+                            <i class="mdui-icon material-icons">payment</i>
+                            支付完成，共使用余额缴纳 <span th:text='${result.getInt("RESULT")}'></span> 份账单
+                        </div>
+                        <div class="mdui-card-primary-subtitle">电力设备支付已完成，不足以一次完整扣费的部分或多余的费用将置入您的余额以供下次扣费。</div>
+                    </div>
+                </div>
+                <a th:href="@{|/user/${userId}|}"
+                        class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-primary">
+                    确定
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

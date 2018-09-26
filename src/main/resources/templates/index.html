@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head th:replace="common-header::common_header(~{::title},~{},~{})">
+    <meta charset="UTF-8">
+    <title>电力缴费</title>
+</head>
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-indigo">
+<!--header-->
+<div th:replace="header::header"></div>
+<div>
+    <div class="mdui-card">
+
+        <div class="mdui-card-primary">
+            <div class="mdui-card-primary-title"><i class="mdui-icon material-icons">settings</i> 总控面板</div>
+            <div class="mdui-card-primary-subtitle">管理电力公司银行代收费系统</div>
+        </div>
+
+        <div class="mdui-card-actions">
+            <button class="mdui-btn mdui-ripple mdui-color-theme-primary"
+                    mdui-dialog="{target: '#check-detail'}">
+                <i class="mdui-icon material-icons">list</i> 明细对账
+            </button>
+            <button class="mdui-btn mdui-ripple mdui-color-theme-primary"
+                    mdui-dialog="{target: '#check-total'}">
+                <i class="mdui-icon material-icons">check</i> 总账对账
+            </button>
+            <button class="mdui-btn mdui-ripple mdui-color-theme-primary"
+                    mdui-dialog="{target: '#late-fee'}">
+                <i class="mdui-icon material-icons">payment</i> 计算全局违约金
+            </button>
+        </div>
+
+    </div>
+
+    <br/>
+
+    <div class="mdui-container-fluid">
+        <div class="mdui-row">
+            <div class="mdui-col-sm-12 mdui-col-md-6">
+                <div>
+                    <div class="mdui-card-primary">
+                        <div class="mdui-card-primary-title"><i class="mdui-icon material-icons">group</i>
+                            用户总表
+                        </div>
+                    </div>
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table mdui-table-hoverable">
+                            <thead>
+                            <tr>
+                                <th>用户ID</th>
+                                <th>用户名</th>
+                                <th>余额</th>
+                                <th>身份证号</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--/*@thymesVar id="users" type="org.json.JSONArray"*/-->
+                            <tr th:each="user:${users}" th:onclick="'location.href=\'/user/'+${user.getString('USER_ID')}+'\''">
+                                <!--/*@thymesVar id="getString" type="org.json.JSONObject"*/-->
+                                <td th:text='${user.getString("USER_ID")}'></td>
+                                <td th:text='${user.getString("USER_NAME")}'></td>
+                                <td th:text='${user.getString("USER_BALANCE")}'></td>
+                                <td th:text='${user.getString("USER_ID_CARD_NUMBER")}'></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <div class="mdui-col-sm-12 mdui-col-md-6">
+
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title"><i class="mdui-icon material-icons">error</i>
+                        对账异常表
+                    </div>
+                </div>
+                <div class="mdui-card">
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table mdui-table-hoverable">
+                            <thead>
+                            <tr>
+                                <th>异常ID</th>
+                                <th>异常类型</th>
+                                <th>异常金额</th>
+                                <th>账单号</th>
+                                <th>银行</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--/*@thymesVar id="users" type="org.json.JSONArray"*/-->
+                            <tr th:each="exception:${exceptions}">
+                                <!--/*@thymesVar id="getString" type="org.json.JSONObject"*/-->
+                                <td th:text='${exception.getString("EXCEPTION_ID")}'></td>
+                                <td th:text='${exception.getString("EXCEPTION_TYPE")}'></td>
+                                <td th:text='${exception.getString("AMOUNT_DIFF")}'></td>
+                                <td th:text='${exception.getString("ORDER_ID")}'></td>
+                                <td th:text='${exception.getString("BANK_ID")}'></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="mdui-dialog" id="late-fee">
+    <div class="mdui-dialog-title"><i class="mdui-icon material-icons">battery_charging_full</i> 滞纳金计算</div>
+    <form th:action="@{|/late-fee|}" method="post">
+        <div class="mdui-dialog-content">
+            输入当前日期（模拟）
+            <div class="mdui-card-content">
+
+                <div class="mdui-textfield">
+                    <i class="mdui-icon material-icons">date_range</i>
+                    <label class="mdui-textfield-label">自定义当前日期时间</label>
+                    <input name="current-date" class="mdui-textfield-input" type="date"/>
+                </div>
+
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button type="submit" class="mdui-btn mdui-ripple mdui-color-theme-accent">
+                提交
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="mdui-dialog" id="check-detail">
+    <div class="mdui-dialog-title"><i class="mdui-icon material-icons">playlist_add_check</i>
+        明细账单核对
+    </div>
+    <form th:action="@{|/check/detail|}" method="post">
+        <div class="mdui-dialog-content">
+            输入对账信息
+            <div class="mdui-card-content">
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <i class="mdui-icon material-icons">account_balance</i>
+                    <label class="mdui-textfield-label">银行代码</label>
+                    <input name="bank" class="mdui-textfield-input"/>
+                </div>
+                <div class="mdui-textfield">
+                    <i class="mdui-icon material-icons">date_range</i>
+                    <label class="mdui-textfield-label">自定义当前日期时间</label>
+                    <input name="date" class="mdui-textfield-input" type="date"/>
+                </div>
+
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button type="submit" class="mdui-btn mdui-ripple mdui-color-theme-accent">
+                提交
+            </button>
+        </div>
+    </form>
+</div>
+
+
+<div class="mdui-dialog" id="check-total">
+    <div class="mdui-dialog-title">
+        <i class="mdui-icon material-icons">assignment_turned_in</i>
+        总账核对</div>
+    <form th:action="@{|/check/total|}" method="post">
+        <div class="mdui-dialog-content">
+            输入对账信息
+            <div class="mdui-card-content">
+                <div class="mdui-textfield mdui-textfield-floating-label">
+                    <i class="mdui-icon material-icons">account_balance</i>
+                    <label class="mdui-textfield-label">银行代码</label>
+                    <input name="bank" class="mdui-textfield-input"/>
+                </div>
+                <div class="mdui-textfield">
+                    <i class="mdui-icon material-icons">monetization_on</i>
+                    <label class="mdui-textfield-label">总交易额</label>
+                    <input name="amount" class="mdui-textfield-input"/>
+                </div>
+                <div class="mdui-textfield">
+                    <i class="mdui-icon material-icons">format_list_numbered</i>
+                    <label class="mdui-textfield-label">总交易笔数</label>
+                    <input name="count" class="mdui-textfield-input" type="number"/>
+                </div>
+                <div class="mdui-textfield">
+                    <i class="mdui-icon material-icons">date_range</i>
+                    <label class="mdui-textfield-label">当前日期时间</label>
+                    <input name="date" class="mdui-textfield-input" type="date"/>
+                </div>
+
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button type="submit" class="mdui-btn mdui-ripple mdui-color-theme-accent">
+                提交
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

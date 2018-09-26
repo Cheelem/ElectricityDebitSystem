@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head th:replace="common-header::common_header(~{::title},~{},~{})">
+    <meta charset="UTF-8">
+    <title>电费支付</title>
+</head>
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-indigo">
+<!--header-->
+<div th:replace="header::header"></div>
+<div>
+    <div>
+        <div class="mdui-container">
+            <div>
+                <div class="mdui-card-primary">
+
+                    <div class="mdui-card-primary-title">
+                        <i class="mdui-icon material-icons">info</i>
+                        <span th:text="${title}"></span>
+                    </div>
+                    <div class="mdui-card-primary-subtitle" th:text="${subtitle}">
+
+                    </div>
+                </div>
+                <div class="mdui-card-content" th:text="${content}">
+                </div>
+                <div class="mdui-card-actions">
+                    <a href="/"
+                       class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-primary">
+                        确定
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

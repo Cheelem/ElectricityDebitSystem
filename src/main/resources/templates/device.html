@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head th:replace="common-header::common_header(~{::title},~{},~{})">
+    <meta charset="UTF-8">
+    <title>抄表员</title>
+</head>
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-indigo">
+<!--header-->
+<div th:replace="header::header"></div>
+<div>
+<div>
+    <div class="mdui-container">
+        <div>
+            <form action="/meter-recorder/submit" method="get">
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <i class="mdui-icon material-icons">textsms</i>
+                <label name="device-id" class="mdui-textfield-label">电表设备编号</label>
+                <input class="mdui-textfield-input"/>
+            </div>
+
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <i class="mdui-icon material-icons">textsms</i>
+                <label name="current_meter" class="mdui-textfield-label">当前读数</label>
+                <input class="mdui-textfield-input"/>
+            </div>
+
+            <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-primary">
+                提交
+            </button>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+</div>
+<script>
+
+</script>
+</body>
+</html>

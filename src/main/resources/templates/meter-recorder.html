@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head th:replace="common-header::common_header(~{::title},~{},~{})">
+    <meta charset="UTF-8">
+    <title>抄表员</title>
+</head>
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-indigo">
+<!--header-->
+<div th:replace="header::header"></div>
+<br/>
+<div>
+    <br/>
+    <div class="mdui-container">
+        <div class="mdui-card">
+            <div class="mdui-card-primary">
+                <div class="mdui-card-primary-title">
+                    <i class="mdui-icon material-icons">edit</i>
+                    电表抄表信息
+                </div>
+                <div class="mdui-card-primary-subtitle">提交设备抄表信息，费用将自动生成。</div>
+            </div>
+            <form action="/meter-recorder/submit" method="get">
+                <div class="mdui-card-content">
+
+                    <div class="mdui-textfield mdui-textfield-floating-label">
+                        <i class="mdui-icon material-icons">format_list_numbered</i>
+                        <label class="mdui-textfield-label">电表设备编号</label>
+                        <input name="device-id" class="mdui-textfield-input" type="number"/>
+                    </div>
+
+                    <div class="mdui-textfield mdui-textfield-floating-label">
+                        <i class="mdui-icon material-icons">filter_9_plus</i>
+                        <label class="mdui-textfield-label">当前读数</label>
+                        <input name="current-meter" class="mdui-textfield-input"/>
+                    </div>
+                    <div class="mdui-textfield">
+                        <i class="mdui-icon material-icons">date_range</i>
+                        <label class="mdui-textfield-label">自定义当前日期时间</label>
+                        <input name="current-date" class="mdui-textfield-input" type="date"/>
+                    </div>
+                </div>
+                <div class="mdui-card-actions">
+                    <button type="submit" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-primary">
+                        提交
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+</script>
+</body>
+</html>

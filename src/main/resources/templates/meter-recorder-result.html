@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head th:replace="common-header::common_header(~{::title},~{},~{})">
+    <meta charset="UTF-8">
+    <title>抄表员</title>
+</head>
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-indigo">
+<!--header-->
+<div th:replace="header::header"></div>
+<div>
+<div>
+    <div class="mdui-container">
+        <div>
+            <div class="mdui-card-primary">
+                <div class="mdui-card-primary-title">
+                    <span th:if='${result.getInt("RESULT")} lt 0'>
+                        <i class="mdui-icon material-icons">error</i> 设备不存在或输入格式有误。
+                    </span>
+                    <div th:if='${result.getInt("RESULT")} gt 0'>
+                       提交完成 生成订单金额金额 <span th:text='${result.getInt("FEE")}'></span>
+                    </div>
+                </div>
+                <div class="mdui-card-primary-subtitle">抄表结果</div>
+            </div>
+            <button onclick="window.history.go(-1)" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-primary">
+                确定
+            </button>
+        </div>
+
+    </div>
+</div>
+</div>
+</body>
+</html>

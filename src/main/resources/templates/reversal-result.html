@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head th:replace="common-header::common_header(~{::title},~{},~{})">
+    <meta charset="UTF-8">
+    <title>冲正</title>
+</head>
+<body class="mdui-theme-primary-blue-grey mdui-theme-accent-indigo">
+<!--header-->
+<div th:replace="header::header"></div>
+<div>
+<div>
+    <div class="mdui-container">
+        <div>
+            <div class="mdui-card-primary">
+                <div class="mdui-card-primary-title">
+                    <span th:if='${result.getInt("RESULT")} lt 0'>
+                        <i class="mdui-icon material-icons">error</i> 冲正操作因账单号不存在而不可执行</span>
+                    <div th:if='${result.getInt("RESULT")} gt 0'>
+                        <i class="mdui-icon material-icons">info</i>
+                        冲正完成，本次缴费账单中所缴的电费金额已退回至您的余额，共计 <span th:text='${result.getDouble("BALANCE")}'></span> 元。
+                    </div>
+                </div>
+                <div class="mdui-card-primary-subtitle">缴费记录冲正</div>
+            </div>
+            <a th:href="@{|/user/${userId}|}" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-primary">
+                确定
+            </a>
+        </div>
+
+    </div>
+</div>
+</div>
+</body>
+</html>
