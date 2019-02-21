@@ -100,8 +100,8 @@ public class DatabaseController {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");//找到oracle驱动器所在的类
             String url="jdbc:oracle:thin:@localhost:1521:XE"; //URL地址
-            String username="ELECTRICITYSYS";
-            String password="b2kt5p9fx6t";
+            String username="USER"; // 修改为本地数据库用户名
+            String password="password";  // 修改为本地数据库密码
             if(ds==null) {
                 //创建连接池
                 ds = new BasicDataSource();
